@@ -4,30 +4,43 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ru.nehodov.listofemployees.R;
+import ru.nehodov.listofemployees.models.Agent;
 import ru.nehodov.listofemployees.models.Employee;
-import ru.nehodov.listofemployees.models.Profession;
+import ru.nehodov.listofemployees.models.Hacker;
+import ru.nehodov.listofemployees.models.Spy;
 
 public class EmployeeList {
 
     private static EmployeeList INSTANCE = new EmployeeList();
 
-    private List<Employee> allEmployees = new ArrayList();
+    private List<Employee> allEmployees = new ArrayList<>();
 
     private EmployeeList() {
-        allEmployees.add(new Employee("Ivan", "Taranov", new Date(), "url", new Profession(0,"Mock")));
-        allEmployees.add(new Employee("John", "Malkovich", new Date(), "url", new Profession(1, "Mock")));
-        allEmployees.add(new Employee("Freddy", "Kruger", new Date(), "url", new Profession(2, "Mock")));
+        for (int index = 0; index < 100; index += 3) {
+            allEmployees.add(new Employee("Ivan", "Taranov", new Date(), R.drawable.man_big, new Hacker()));
+            allEmployees.add(new Employee("John", "Malkovich", new Date(), R.drawable.user_big, new Agent()));
+            allEmployees.add(new Employee("Freddy", "Kruger", new Date(), R.drawable.spy_big, new Spy()));
+        }
     }
 
     public static EmployeeList getInstance() {
         return INSTANCE;
     }
 
-    public List<Employee> getEmployesByProfession(Profession profession) {
+    public List<Employee> getAllEmployees() {
+        return allEmployees;
+    }
+
+    public List<Employee> getEmployeesByProfession(int id) {
         List<Employee> result = new ArrayList<>();
-        for (Employee employee : allEmployees) {
-            if (employee.getProfession().getId() == profession.getId()) {
-                result.add(employee);
+        if (id == 3) {
+            result = getAllEmployees();
+        } else {
+            for (Employee employee : allEmployees) {
+                if (employee.getProfession().getId() == id) {
+                    result.add(employee);
+                }
             }
         }
         return result;

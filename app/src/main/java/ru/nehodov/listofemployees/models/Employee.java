@@ -1,21 +1,22 @@
 package ru.nehodov.listofemployees.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Employee {
+public class Employee implements Serializable {
 
     private final String firstName;
     private final String lastName;
     private final Date birthDate;
 
-    private String photoUrl;
+    private int photo;
     private Profession profession;
 
-    public Employee(String firstName, String lastName, Date birthDate, String photoUrl, Profession profession) {
+    public Employee(String firstName, String lastName, Date birthDate, int photo, Profession profession) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
-        this.photoUrl = photoUrl;
+        this.photo = photo;
         this.profession = profession;
     }
 
@@ -31,12 +32,12 @@ public class Employee {
         return birthDate;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public int getPhoto() {
+        return photo;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setPhoto(int photoUrl) {
+        this.photo = photoUrl;
     }
 
     public Profession getProfession() {

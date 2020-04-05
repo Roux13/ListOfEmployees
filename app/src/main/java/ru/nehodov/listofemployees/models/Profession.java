@@ -1,6 +1,8 @@
 package ru.nehodov.listofemployees.models;
 
-public class Profession {
+import java.io.Serializable;
+
+public class Profession implements Serializable {
 
     private final int id;
     private final String name;
