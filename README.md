@@ -1,8 +1,8 @@
 # ListOfEmployees
 
-The app - it's a list of employees.
+The app - it's a list of employees.  
 There is a list of professions and there is a list of employees.
-You can choose a profession and employee with the profession and then to watch his data card.
+You can choose a profession and employee by the profession and then to watch his pesonal file.  
 All screens are made with fragments. Lists are made with RecyclerView.
 
 The app has 3 screens:
