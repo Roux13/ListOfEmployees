@@ -10,10 +10,10 @@
         android:id="@+id/item_employee_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:text="Name LastName"
         android:textColor="@android:color/black"
-        android:textSize="24sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,9 +21,9 @@
 
     <ImageView
         android:id="@+id/item_image_employee"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="TODO"
         android:scaleType="centerCrop"
@@ -40,6 +40,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:text="05.04.2020"
+        android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/item_employee_name"
         app:layout_constraintTop_toBottomOf="@+id/item_employee_name" />

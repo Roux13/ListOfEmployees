@@ -1,5 +1,6 @@
 package ru.nehodov.listofemployees.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -22,9 +24,11 @@ import ru.nehodov.listofemployees.models.Employee;
  */
 public class EmployeeCardFragment extends Fragment {
 
-    public static final String EMPLOYEE_CARD = "employee_card";
+    private static final String EMPLOYEE_CARD = "employee_card";
 
     private Employee employee;
+
+//    private EmployeeListFragment.EmployeeSelect employeeSelect;
 
     public EmployeeCardFragment() {
         // Required empty public constructor
@@ -60,5 +64,18 @@ public class EmployeeCardFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(EMPLOYEE_CARD, employee);
+    }
+
+    public static EmployeeCardFragment getInstance(Employee employee) {
+        Bundle args = new Bundle();
+        args.putSerializable(EMPLOYEE_CARD, employee);
+        EmployeeCardFragment fragment = new EmployeeCardFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
     }
 }

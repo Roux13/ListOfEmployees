@@ -1,5 +1,6 @@
 package ru.nehodov.listofemployees.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,6 +30,8 @@ public class ProfessionListFragment extends Fragment {
 
     private RecyclerView recycler;
 
+    private ProfessionSelect professionSelect;
+
     public ProfessionListFragment() {
         // Required empty public constructor
     }
@@ -41,16 +44,19 @@ public class ProfessionListFragment extends Fragment {
         recycler = view.findViewById(R.id.professional_list);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
-        recycler.setAdapter(new ProfessionAdapter());
+        recycler.setAdapter(new ProfessionAdapter(professionSelect));
         return view;
     }
 
     private class ProfessionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private List<Profession> professions;
+        private final List<Profession> professions;
 
-        public ProfessionAdapter() {
+        private final ProfessionSelect professionSelect;
+
+        public ProfessionAdapter(ProfessionSelect professionSelect) {
             this.professions = professionStore.getProfessions();
+            this.professionSelect = professionSelect;
         }
 
         @NonNull
@@ -65,25 +71,11 @@ public class ProfessionListFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             final Profession profession = professions.get(position);
-            if (position % 2 == 0) {
-                holder.itemView.setBackgroundColor(getResources().getColor(R.color.grey_item));
-            }
-            if (position % 2 != 0) {
-                holder.itemView.setBackgroundColor(getResources().getColor(R.color.white));
-            }
+            holder.itemView.setBackgroundColor(getColor(position));
             TextView nameTextView = holder.itemView.findViewById(R.id.profession_name);
             nameTextView.setText(profession.getName());
-            holder.itemView.setOnClickListener(view -> {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                Bundle args = new Bundle();
-                args.putInt(EmployeeListFragment.PROFESSION_ID, profession.getId());
-                Fragment fragment = new EmployeeListFragment();
-                fragment.setArguments(args);
-                fm.beginTransaction()
-                        .addToBackStack("profession_list")
-                        .replace(R.id.host, fragment)
-                        .commit();
-            });
+            holder.itemView.setOnClickListener(
+                    view -> professionSelect.selectedProfession(profession.getId()));
         }
 
         @Override
@@ -91,9 +83,35 @@ public class ProfessionListFragment extends Fragment {
             return professions.size();
         }
 
+        private int getColor(int position) {
+            int color = 0;
+            if (position % 2 == 0) {
+                color = getResources().getColor(R.color.grey_item);
+            }
+            if (position % 2 != 0) {
+                color = getResources().getColor(R.color.white);
+            }
+            return color;
+        }
     }
 
+    public static ProfessionListFragment getInstance() {
+        return new ProfessionListFragment();
+    }
 
+    public interface ProfessionSelect {
+        void selectedProfession(int professionId);
+    }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.professionSelect = (ProfessionSelect) context;
+    }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.professionSelect = null;
+    }
 }

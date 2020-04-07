@@ -18,9 +18,9 @@ public class EmployeeList {
 
     private EmployeeList() {
         for (int index = 0; index < 100; index += 3) {
-            allEmployees.add(new Employee("Ivan", "Taranov", new Date(), R.drawable.man_big, new Hacker()));
-            allEmployees.add(new Employee("John", "Malkovich", new Date(), R.drawable.user_big, new Agent()));
-            allEmployees.add(new Employee("Freddy", "Kruger", new Date(), R.drawable.spy_big, new Spy()));
+            allEmployees.add(new Employee("Ivan" + index, "Taranov", new Date(), R.drawable.man_big, new Hacker()));
+            allEmployees.add(new Employee("John" + index, "Malkovich", new Date(), R.drawable.user_big, new Agent()));
+            allEmployees.add(new Employee("Freddy" + index, "Kruger", new Date(), R.drawable.spy_big, new Spy()));
         }
     }
 

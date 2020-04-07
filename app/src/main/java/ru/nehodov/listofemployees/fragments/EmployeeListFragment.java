@@ -1,10 +1,10 @@
 package ru.nehodov.listofemployees.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,13 +27,15 @@ import ru.nehodov.listofemployees.stores.EmployeeList;
  */
 public class EmployeeListFragment extends Fragment {
 
-    public static final String PROFESSION_ID = "prodession_id";
+    private static final String PROFESSION_ID = "profession_id";
 
     private final EmployeeList employeeStore = EmployeeList.getInstance();
 
     private int professionId;
 
     private RecyclerView recycler;
+
+    private EmployeeSelect employeeSelect;
 
     public EmployeeListFragment() {
         // Required empty public constructor
@@ -44,10 +46,14 @@ public class EmployeeListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.employee_list, container, false);
+
         professionId = getArguments().getInt(PROFESSION_ID);
         recycler = view.findViewById(R.id.employee_list);
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recycler.setAdapter(new EmployeeAdapter(employeeStore.getEmployeesByProfession(professionId)));
+        recycler.setAdapter(new EmployeeAdapter(
+                employeeStore.getEmployeesByProfession(professionId),
+                employeeSelect
+        ));
 
         if (savedInstanceState != null) {
             professionId = savedInstanceState.getInt(PROFESSION_ID);
@@ -59,9 +65,11 @@ public class EmployeeListFragment extends Fragment {
 
         private final List<Employee> employees;
 
+        private final EmployeeSelect employeeSelect;
 
-        public EmployeeAdapter(List<Employee> employees) {
+        public EmployeeAdapter(List<Employee> employees, EmployeeSelect employeeSelect) {
             this.employees = employees;
+            this.employeeSelect = employeeSelect;
         }
 
         @NonNull
@@ -75,12 +83,7 @@ public class EmployeeListFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             final Employee employee = employees.get(position);
-            if (position % 2 == 0) {
-                holder.itemView.setBackgroundColor(getResources().getColor(R.color.grey_item));
-            }
-            if (position % 2 != 0) {
-                holder.itemView.setBackgroundColor(getResources().getColor(R.color.white));
-            }
+            holder.itemView.setBackgroundColor(this.getColor(position));
             TextView nameTextView = holder.itemView.findViewById(R.id.item_employee_name);
             TextView birthDateTextView = holder.itemView.findViewById(R.id.item_birth_date_employee);
             ImageView imageView = holder.itemView.findViewById(R.id.item_image_employee);
@@ -91,22 +94,23 @@ public class EmployeeListFragment extends Fragment {
             birthDateTextView.setText(dateFormat.format(employee.getBirthDate()));
             imageView.setImageResource(employee.getPhoto());
 
-            holder.itemView.setOnClickListener(view -> {
-                Bundle args = new Bundle();
-                args.putSerializable(EmployeeCardFragment.EMPLOYEE_CARD, employee);
-                Fragment fragment = new EmployeeCardFragment();
-                fragment.setArguments(args);
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                fm.beginTransaction()
-                        .addToBackStack("employees_list")
-                        .replace(R.id.host, fragment)
-                        .commit();
-            });
+            holder.itemView.setOnClickListener(view -> employeeSelect.selectedEmployee(professionId, employee));
         }
 
         @Override
         public int getItemCount() {
             return employees.size();
+        }
+
+        private int getColor(int position) {
+            int color = 0;
+            if (position % 2 == 0) {
+               color = getResources().getColor(R.color.grey_item);
+            }
+            if (position % 2 != 0) {
+                color = getResources().getColor(R.color.white);
+            }
+            return color;
         }
     }
 
@@ -114,5 +118,31 @@ public class EmployeeListFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(PROFESSION_ID, professionId);
+    }
+
+
+
+    public static EmployeeListFragment getInstance(int professionId) {
+        Bundle args = new Bundle();
+        args.putInt(PROFESSION_ID, professionId);
+        EmployeeListFragment fragment = new EmployeeListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.employeeSelect = (EmployeeSelect) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        this.employeeSelect = null;
+    }
+
+    public interface EmployeeSelect{
+        void selectedEmployee(int professionId, Employee employee);
     }
 }
