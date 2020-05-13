@@ -8,7 +8,7 @@ buildscript {
         
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.2'
+        classpath 'com.android.tools.build:gradle:3.6.3'
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -22,6 +22,13 @@ allprojects {
         jcenter()
         
     }
+}
+
+ext {
+    room_version = '2.2.5'
+    archLifecycleVersion = '2.2.0'
+    materialVersion = '1.1.0'
+
 }
 
 task clean(type: Delete) {

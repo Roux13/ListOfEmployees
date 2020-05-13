@@ -22,15 +22,15 @@ public class EmployeeRepository {
         EmployeeRoomDatabase db = EmployeeRoomDatabase.getDatabase(application);
         this.professionsDao = db.professionsDao();
         this.employeesDao = db.employeesDao();
-        professions = this.professionsDao.getAll();
-        employees = this.employeesDao.getAll();
+        this.professions = professionsDao.getAll();
+        this.employees = employeesDao.getAll();
     }
 
     public LiveData<List<Profession>> getAllProfessions() {
-        return professions;
+        return this.professions;
     }
 
     public LiveData<List<Employee>> getAllEmployees() {
-        return employees;
+        return this.employees;
     }
 }
