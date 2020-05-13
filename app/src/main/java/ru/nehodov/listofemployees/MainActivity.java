@@ -1,56 +1,56 @@
 package ru.nehodov.listofemployees;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+
+import java.util.List;
 
 import ru.nehodov.listofemployees.fragments.EmployeeCardFragment;
 import ru.nehodov.listofemployees.fragments.EmployeeListFragment;
 import ru.nehodov.listofemployees.fragments.ProfessionListFragment;
 import ru.nehodov.listofemployees.models.Employee;
+import ru.nehodov.listofemployees.models.Profession;
 
-public class MainActivity extends AppCompatActivity implements EmployeeListFragment.EmployeeSelect, ProfessionListFragment.ProfessionSelect {
+public class MainActivity extends AppCompatActivity implements EmployeeListListener,
+        ProfessionListener {
 
-    private static final String EMPLOYEE_KEY = "employee_key";
-    private static final String ID_KEY = "profession_id_key";
+    private EmployeeViewModel viewModel;
 
     private FragmentManager fm;
-    private int professionId = -1;
-    private Employee employee;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host);
 
+        viewModel = new ViewModelProvider(this).get(EmployeeViewModel.class);
+        viewModel.getEmployeeLiveData().observe(this, viewModel::setEmplooyees);
         fm = getSupportFragmentManager();
         if (fm.findFragmentById(R.id.host) == null) {
             fm.beginTransaction()
-                    .add(R.id.host, getFrg())
+                    .add(R.id.host, getProfessionFrg())
                     .commit();
         }
 
-        if (savedInstanceState != null) {
-            professionId = savedInstanceState.getInt(ID_KEY);
-            employee = (Employee) savedInstanceState.getSerializable(EMPLOYEE_KEY);
-            if (professionId != -1)
-            selectedEmployee(professionId, employee);
-        }
     }
 
-    public Fragment getFrg() {
+    public Fragment getProfessionFrg() {
         return ProfessionListFragment.getInstance();
     }
 
     @Override
-    public void selectedEmployee(int professionId, Employee employee) {
-        this.professionId = professionId;
-        this.employee = employee;
-        EmployeeCardFragment fragment = EmployeeCardFragment.getInstance(employee);
+    public void selectEmployee(Profession profession, Employee employee) {
+        viewModel.setSelectedProfession(profession);
+        viewModel.setSelectedEmployee(employee);
+        EmployeeCardFragment fragment = EmployeeCardFragment.getInstance(
+                viewModel.getSelectedEmployee());
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             fm.beginTransaction()
@@ -59,7 +59,8 @@ public class MainActivity extends AppCompatActivity implements EmployeeListFragm
                     .commit();
         }
         if (orientation ==  Configuration.ORIENTATION_LANDSCAPE) {
-            EmployeeListFragment employeeListFrg = EmployeeListFragment.getInstance(professionId);
+            EmployeeListFragment employeeListFrg = EmployeeListFragment.getInstance(
+                    viewModel.getSelectedProfession());
             fm.beginTransaction()
                     .replace(R.id.host, employeeListFrg)
                     .commit();
@@ -76,8 +77,9 @@ public class MainActivity extends AppCompatActivity implements EmployeeListFragm
     }
 
     @Override
-    public void selectedProfession(int professionId) {
-        EmployeeListFragment fragment = EmployeeListFragment.getInstance(professionId);
+    public void selectProfession(Profession profession) {
+        viewModel.setSelectedProfession(profession);
+        EmployeeListFragment fragment = EmployeeListFragment.getInstance(profession);
         fm.beginTransaction()
                 .addToBackStack("Profession_list")
                 .replace(R.id.host, fragment)
@@ -85,9 +87,13 @@ public class MainActivity extends AppCompatActivity implements EmployeeListFragm
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(ID_KEY, professionId);
-        outState.putSerializable(EMPLOYEE_KEY, employee);
+    public LiveData<List<Profession>> getProfessions() {
+        return viewModel.getAllProfessions();
     }
+
+    @Override
+    public List<Employee> getEmployees(Profession profession) {
+        return viewModel.getEmployees(profession);
+    }
+
 }

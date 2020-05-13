@@ -19,19 +19,13 @@ import java.util.Locale;
 import ru.nehodov.listofemployees.R;
 import ru.nehodov.listofemployees.models.Employee;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class EmployeeCardFragment extends Fragment {
 
     private static final String EMPLOYEE_CARD = "employee_card";
 
     private Employee employee;
 
-//    private EmployeeListFragment.EmployeeSelect employeeSelect;
-
     public EmployeeCardFragment() {
-        // Required empty public constructor
     }
 
 

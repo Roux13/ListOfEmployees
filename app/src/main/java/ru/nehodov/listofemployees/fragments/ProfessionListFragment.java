@@ -5,8 +5,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,24 +14,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Objects;
 
+import ru.nehodov.listofemployees.ProfessionListener;
 import ru.nehodov.listofemployees.R;
 import ru.nehodov.listofemployees.models.Profession;
-import ru.nehodov.listofemployees.stores.ProfessionList;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ProfessionListFragment extends Fragment {
 
-    private ProfessionList professionStore = ProfessionList.getInstance();
-
     private RecyclerView recycler;
+    private ProfessionAdapter adapter;
 
-    private ProfessionSelect professionSelect;
+    private ProfessionListener listener;
 
     public ProfessionListFragment() {
-        // Required empty public constructor
     }
 
 
@@ -44,19 +38,17 @@ public class ProfessionListFragment extends Fragment {
         recycler = view.findViewById(R.id.professional_list);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
-        recycler.setAdapter(new ProfessionAdapter(professionSelect));
+        adapter = new ProfessionAdapter();
+        listener.getProfessions().observe(Objects.requireNonNull(getActivity()), adapter::setProfessions);
+        recycler.setAdapter(adapter);
         return view;
     }
 
     private class ProfessionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private final List<Profession> professions;
+        private List<Profession> professions;
 
-        private final ProfessionSelect professionSelect;
-
-        public ProfessionAdapter(ProfessionSelect professionSelect) {
-            this.professions = professionStore.getProfessions();
-            this.professionSelect = professionSelect;
+        public ProfessionAdapter() {
         }
 
         @NonNull
@@ -71,47 +63,48 @@ public class ProfessionListFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             final Profession profession = professions.get(position);
-            holder.itemView.setBackgroundColor(getColor(position));
             TextView nameTextView = holder.itemView.findViewById(R.id.profession_name);
             nameTextView.setText(profession.getName());
             holder.itemView.setOnClickListener(
-                    view -> professionSelect.selectedProfession(profession.getId()));
+                    view -> listener.selectProfession(profession));
         }
 
         @Override
         public int getItemCount() {
-            return professions.size();
+            if (professions == null) {
+                return 0;
+            } else {
+                return professions.size();
+            }
         }
 
-        private int getColor(int position) {
-            int color = 0;
-            if (position % 2 == 0) {
-                color = getResources().getColor(R.color.grey_item);
-            }
-            if (position % 2 != 0) {
-                color = getResources().getColor(R.color.white);
-            }
-            return color;
+        public void setProfessions(List<Profession> professions) {
+            this.professions = professions;
+            notifyDataSetChanged();
         }
+
     }
 
     public static ProfessionListFragment getInstance() {
         return new ProfessionListFragment();
     }
 
-    public interface ProfessionSelect {
-        void selectedProfession(int professionId);
-    }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.professionSelect = (ProfessionSelect) context;
+        try {
+            this.listener = (ProfessionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(String.format("Class %s must implement %s interface",
+                    context.getClass().getSimpleName(),
+                    listener.getClass().getSimpleName()
+            ));
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        this.professionSelect = null;
+        this.listener = null;
     }
 }
