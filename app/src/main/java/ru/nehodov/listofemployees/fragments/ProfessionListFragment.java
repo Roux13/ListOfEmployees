@@ -30,7 +30,6 @@ public class ProfessionListFragment extends Fragment {
     public ProfessionListFragment() {
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -39,7 +38,8 @@ public class ProfessionListFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recycler.setLayoutManager(layoutManager);
         adapter = new ProfessionAdapter();
-        listener.getProfessions().observe(Objects.requireNonNull(getActivity()), adapter::setProfessions);
+        listener.getProfessions()
+                .observe(requireActivity(), adapter::setProfessions);
         recycler.setAdapter(adapter);
         return view;
     }

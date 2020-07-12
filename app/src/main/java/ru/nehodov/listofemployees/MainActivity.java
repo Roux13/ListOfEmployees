@@ -24,14 +24,13 @@ public class MainActivity extends AppCompatActivity implements EmployeeListListe
 
     private FragmentManager fm;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.host);
 
         viewModel = new ViewModelProvider(this).get(EmployeeViewModel.class);
-        viewModel.getEmployeeLiveData().observe(this, viewModel::setEmplooyees);
+        viewModel.getEmployeeLiveData().observe(this, viewModel::setEmployees);
         fm = getSupportFragmentManager();
         if (fm.findFragmentById(R.id.host) == null) {
             fm.beginTransaction()

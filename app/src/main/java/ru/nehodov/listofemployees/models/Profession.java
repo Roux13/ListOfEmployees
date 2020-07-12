@@ -5,15 +5,19 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity(tableName = "professions")
 public class Profession implements Serializable {
 
+    @SerializedName("specialty_id")
     @PrimaryKey
     @ColumnInfo(name = "id")
     private int id;
+
     @ColumnInfo(name = "name")
     private String name;
 
@@ -45,11 +49,14 @@ public class Profession implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Profession that = (Profession) o;
-        return id == that.id &&
-                Objects.equals(name, that.name);
+        return id == that.id && Objects.equals(name, that.name);
     }
 
     @Override

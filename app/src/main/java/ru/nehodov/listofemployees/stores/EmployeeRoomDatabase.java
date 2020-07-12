@@ -25,22 +25,67 @@ import ru.nehodov.listofemployees.models.Spy;
 @Database(entities = {Employee.class, Profession.class}, version = 1, exportSchema = false)
 public abstract class EmployeeRoomDatabase extends RoomDatabase {
 
+    private static final int NUMBER_OF_THREADS = 4;
+    private static volatile EmployeeRoomDatabase instance;
+
+    static final ExecutorService DATABASE_WRITE_EXECUTOR
+            = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+
     private static final String DB_NAME = "employees_db";
 
     public abstract EmployeesDao employeesDao();
 
     public abstract ProfessionsDao professionsDao();
 
-    private static volatile EmployeeRoomDatabase INSTANCE;
-    private static final int NUMBER_OF_THREADS = 4;
-    static final ExecutorService databaseWriteExecutor
-            = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    @SuppressWarnings("checkstyle:DeclarationOrder")
+    private static RoomDatabase.Callback employeeDBCallBack = new RoomDatabase.Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+            DATABASE_WRITE_EXECUTOR.execute(() -> {
+                        ProfessionsDao professionsDao = instance.professionsDao();
+                        EmployeesDao employeesDao = instance.employeesDao();
+                        employeesDao.deleteAll();
+                        professionsDao.deleteAll();
+//                            professionsDao.insert(new Hacker());
+//                            professionsDao.insert(new Agent());
+//                            professionsDao.insert(new Spy());
+//                            professionsDao.insert(new AllProfesions());
+//
+//                        for (int index = 0; index < 100; index += 3) {
+//                            employeesDao.insert(new Employee(
+//                                    index,
+//                                    "Ivan" + index,
+//                                    "Taranov",
+//                                    new Date(),
+//                                    R.drawable.man_big,
+//                                    new Hacker())
+//                            );
+//                            employeesDao.insert(new Employee(
+//                                    index + 1,
+//                                    "John" + index,
+//                                    "Malkovich",
+//                                    new Date(),
+//                                    R.drawable.user_big,
+//                                    new Agent()));
+//                            employeesDao.insert(new Employee(
+//                                    index + 2,
+//                                    "Freddy" + index,
+//                                    "Kruger",
+//                                    new Date(),
+//                                    R.drawable.spy_big,
+//                                    new Spy()));
+//                        }
+                    }
+            );
+        }
+    };
 
     static EmployeeRoomDatabase getDatabase(final Context context) {
-        if (INSTANCE == null) {
+        if (instance == null) {
             synchronized (EmployeeRoomDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                if (instance == null) {
+                    instance = Room.databaseBuilder(context.getApplicationContext(),
                             EmployeeRoomDatabase.class, DB_NAME)
                             .addCallback(employeeDBCallBack)
                             .allowMainThreadQueries()
@@ -48,49 +93,6 @@ public abstract class EmployeeRoomDatabase extends RoomDatabase {
                 }
             }
         }
-        return INSTANCE;
+        return instance;
     }
-
-    private static RoomDatabase.Callback employeeDBCallBack = new RoomDatabase.Callback() {
-        @Override
-        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-            super.onCreate(db);
-
-            databaseWriteExecutor.execute(() -> {
-                        ProfessionsDao professionsDao = INSTANCE.professionsDao();
-                        EmployeesDao employeesDao = INSTANCE.employeesDao();
-                            professionsDao.insert(new Hacker());
-                            professionsDao.insert(new Agent());
-                            professionsDao.insert(new Spy());
-                            professionsDao.insert(new AllProfesions());
-
-                        for (int index = 0; index < 100; index += 3) {
-                            employeesDao.insert(new Employee(
-                                    index,
-                                    "Ivan" + index,
-                                    "Taranov",
-                                    new Date(),
-                                    R.drawable.man_big,
-                                    new Hacker())
-                            );
-                            employeesDao.insert(new Employee(
-                                    index + 1,
-                                    "John" + index,
-                                    "Malkovich",
-                                    new Date(),
-                                    R.drawable.user_big,
-                                    new Agent()));
-                            employeesDao.insert(new Employee(
-                                    index + 2,
-                                    "Freddy" + index,
-                                    "Kruger",
-                                    new Date(),
-                                    R.drawable.spy_big,
-                                    new Spy()));
-                        }
-                    }
-                    );
-        }
-    };
-
 }

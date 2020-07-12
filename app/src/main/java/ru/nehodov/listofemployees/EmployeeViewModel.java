@@ -4,12 +4,12 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Flowable;
 import ru.nehodov.listofemployees.models.Employee;
 import ru.nehodov.listofemployees.models.Profession;
 import ru.nehodov.listofemployees.stores.EmployeeRepository;
@@ -45,8 +45,11 @@ public class EmployeeViewModel extends AndroidViewModel {
         } else {
             List<Employee> result = new ArrayList<>();
             for (Employee employee : employees) {
-                if (employee.getProfession().getId() == profession.getId()) {
-                    result.add(employee);
+                for (Profession p : employee.getProfessions()) {
+                    if (p.getId() == profession.getId()) {
+                        result.add(employee);
+                        break;
+                    }
                 }
             }
             return result;
@@ -73,7 +76,7 @@ public class EmployeeViewModel extends AndroidViewModel {
         return employeeLiveData;
     }
 
-    public void setEmplooyees(List<Employee> employees) {
+    public void setEmployees(List<Employee> employees) {
         this.employees = employees;
     }
 

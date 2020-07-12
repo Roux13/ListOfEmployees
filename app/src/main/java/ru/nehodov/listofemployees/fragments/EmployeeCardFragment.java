@@ -12,12 +12,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.Serializable;
+import com.squareup.picasso.Picasso;
+
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import io.reactivex.Flowable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.nehodov.listofemployees.R;
 import ru.nehodov.listofemployees.models.Employee;
+import ru.nehodov.listofemployees.models.Profession;
 
 public class EmployeeCardFragment extends Fragment {
 
@@ -27,7 +31,6 @@ public class EmployeeCardFragment extends Fragment {
 
     public EmployeeCardFragment() {
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,10 +50,20 @@ public class EmployeeCardFragment extends Fragment {
 
         firstNameTextView.setText(employee.getFirstName());
         lastNameTextView.setText(employee.getLastName());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
-        birthDateTextView.setText(dateFormat.format(employee.getBirthDate()));
-        professionTextView.setText(employee.getProfession().getName());
-        imageView.setImageResource(employee.getPhoto());
+        birthDateTextView.setText(employee.getBirthDate());
+        StringBuffer professionName = new StringBuffer("");
+        for (Profession profession : employee.getProfessions()) {
+            professionName.append(profession.getName()).append(System.lineSeparator());
+        }
+        professionTextView.setText(professionName);
+        if (employee.getPhoto() != null && !employee.getPhoto().equals("")) {
+            Picasso.get().load(employee.getPhoto())
+                    .placeholder(R.drawable.user_big)
+                    .error(R.drawable.user_big)
+                    .into(imageView);
+        } else {
+            imageView.setImageResource(R.drawable.user_big);
+        }
         return view;
     }
 
