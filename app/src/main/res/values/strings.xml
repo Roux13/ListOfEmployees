@@ -3,4 +3,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="first_name">First name:</string>
+    <string name="last_name">Last name:</string>
+    <string name="lastname">LastName</string>
+    <string name="birth_date">Birth date:</string>
+    <string name="_11_01_1980">11-01-1980</string>
+    <string name="profession">Profession:</string>
+    <string name="prof">prof.</string>
+    <string name="name">Name</string>
 </resources>

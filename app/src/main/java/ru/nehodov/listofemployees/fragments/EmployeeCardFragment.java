@@ -14,11 +14,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-import io.reactivex.Flowable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import ru.nehodov.listofemployees.R;
 import ru.nehodov.listofemployees.models.Employee;
 import ru.nehodov.listofemployees.models.Profession;
@@ -42,27 +37,38 @@ public class EmployeeCardFragment extends Fragment {
         TextView professionTextView = view.findViewById(R.id.profession_blanc);
         ImageView imageView = view.findViewById(R.id.employee_big_image);
 
-        if (savedInstanceState == null) {
-            employee = (Employee) getArguments().getSerializable(EMPLOYEE_CARD);
-        } else {
+        if (savedInstanceState == null && getArguments() != null) {
+            try {
+                EmployeeCardFragmentArgs fragmentArgs
+                        = EmployeeCardFragmentArgs.fromBundle(getArguments());
+                employee = fragmentArgs.getEmployee();
+            } catch (IllegalArgumentException e) {
+                view = inflater.inflate(R.layout.empty_layout, container, false);
+                return view;
+            }
+        } else if (savedInstanceState != null) {
             employee = (Employee) savedInstanceState.getSerializable(EMPLOYEE_CARD);
+        } else {
+            return view;
         }
 
-        firstNameTextView.setText(employee.getFirstName());
-        lastNameTextView.setText(employee.getLastName());
-        birthDateTextView.setText(employee.getBirthDate());
-        StringBuffer professionName = new StringBuffer("");
-        for (Profession profession : employee.getProfessions()) {
-            professionName.append(profession.getName()).append(System.lineSeparator());
-        }
-        professionTextView.setText(professionName);
-        if (employee.getPhoto() != null && !employee.getPhoto().equals("")) {
-            Picasso.get().load(employee.getPhoto())
-                    .placeholder(R.drawable.user_big)
-                    .error(R.drawable.user_big)
-                    .into(imageView);
-        } else {
-            imageView.setImageResource(R.drawable.user_big);
+        if (employee != null) {
+            firstNameTextView.setText(employee.getFirstName());
+            lastNameTextView.setText(employee.getLastName());
+            birthDateTextView.setText(employee.getBirthDate());
+            StringBuffer professionName = new StringBuffer();
+            for (Profession profession : employee.getProfessions()) {
+                professionName.append(profession.getName()).append(System.lineSeparator());
+            }
+            professionTextView.setText(professionName);
+            if (employee.getPhoto() != null && !employee.getPhoto().equals("")) {
+                Picasso.get().load(employee.getPhoto())
+                        .placeholder(R.drawable.user_big)
+                        .error(R.drawable.user_big)
+                        .into(imageView);
+            } else {
+                imageView.setImageResource(R.drawable.user_big);
+            }
         }
         return view;
     }
@@ -71,14 +77,6 @@ public class EmployeeCardFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(EMPLOYEE_CARD, employee);
-    }
-
-    public static EmployeeCardFragment getInstance(Employee employee) {
-        Bundle args = new Bundle();
-        args.putSerializable(EMPLOYEE_CARD, employee);
-        EmployeeCardFragment fragment = new EmployeeCardFragment();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override

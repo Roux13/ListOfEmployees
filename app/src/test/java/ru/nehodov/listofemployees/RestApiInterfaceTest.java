@@ -1,16 +1,10 @@
 package ru.nehodov.listofemployees;
 
 import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 
 import org.junit.Test;
 
-import javax.xml.transform.Source;
-
-import ru.nehodov.listofemployees.models.Employee;
 import ru.nehodov.listofemployees.models.Response;
-
-import static org.junit.Assert.*;
 
 public class RestApiInterfaceTest {
 

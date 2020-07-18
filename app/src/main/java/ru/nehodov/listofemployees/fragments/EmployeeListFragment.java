@@ -16,9 +16,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 import ru.nehodov.listofemployees.EmployeeListListener;
 import ru.nehodov.listofemployees.R;
@@ -41,7 +39,8 @@ public class EmployeeListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.employee_list, container, false);
 
-        profession = (Profession) getArguments().getSerializable(PROFESSION_KEY);
+        EmployeeListFragmentArgs fragmentArgs = EmployeeListFragmentArgs.fromBundle(getArguments());
+        profession = fragmentArgs.getProfession();
         recycler = view.findViewById(R.id.employee_list);
         recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter = new EmployeeAdapter();

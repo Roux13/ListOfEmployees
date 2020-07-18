@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/employee_card_navigation_graph"
+    app:startDestination="@id/employeeCard">
+
+    <fragment
+        android:id="@+id/employeeCard"
+        android:name="ru.nehodov.listofemployees.fragments.EmployeeCardFragment"
+        android:label="EmployeeCardFragment" >
+        <argument
+            android:name="employee"
+            app:argType="ru.nehodov.listofemployees.models.Employee" />
+    </fragment>
+    <action android:id="@+id/action_global_employeeCard" app:destination="@id/employeeCard" />
+    <argument
+        android:name="employee"
+        android:defaultValue="@null" />
+</navigation>

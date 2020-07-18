@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/employees_nav_graph"
+    app:startDestination="@id/professionList">
+
+    <fragment
+        android:id="@+id/professionList"
+        android:name="ru.nehodov.listofemployees.fragments.ProfessionListFragment"
+        android:label="ProfessionListFragment"
+        tools:layout="@layout/profession_list">
+        <action
+            android:id="@+id/action_professionList_to_employeeList"
+            app:destination="@id/employeeList" />
+    </fragment>
+    <fragment
+        android:id="@+id/employeeList"
+        android:name="ru.nehodov.listofemployees.fragments.EmployeeListFragment"
+        android:label="EmployeeListFragment"
+        tools:layout="@layout/employee_list">
+        <action
+            android:id="@+id/action_employeeList_to_employeeCard"
+            app:destination="@id/employeeCard" />
+        <argument
+            android:name="profession"
+            app:argType="ru.nehodov.listofemployees.models.Profession" />
+    </fragment>
+    <fragment
+        android:id="@+id/employeeCard"
+        android:name="ru.nehodov.listofemployees.fragments.EmployeeCardFragment"
+        android:label="EmployeeCardFragment"
+        tools:layout="@layout/employee_card">
+        <argument
+            android:name="employee"
+            app:argType="ru.nehodov.listofemployees.models.Employee" />
+    </fragment>
+    <action android:id="@+id/action_global_employeeList" app:destination="@id/employeeList" />
+    <action android:id="@+id/action_global_employeeCard" app:destination="@id/employeeCard" />
+</navigation>

@@ -3,20 +3,24 @@ package ru.nehodov.listofemployees;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import io.reactivex.Flowable;
 import ru.nehodov.listofemployees.models.Employee;
 import ru.nehodov.listofemployees.models.Profession;
 import ru.nehodov.listofemployees.stores.EmployeeRepository;
 
 public class EmployeeViewModel extends AndroidViewModel {
 
-    private static final int ALL_PROFESSIONS_ID = 3;
+    public static final int ALL_PROFESSIONS_ID = Integer.MAX_VALUE;
 
     private EmployeeRepository repository;
 
@@ -27,11 +31,16 @@ public class EmployeeViewModel extends AndroidViewModel {
     private Profession selectedProfession;
     private Employee selectedEmployee;
 
+    private boolean isProfessionSelected;
+    private boolean isEmployeeSelected;
+
     public EmployeeViewModel(@NonNull Application application) {
         super(application);
         this.repository = new EmployeeRepository(application);
         this.professions = repository.getAllProfessions();
         this.employeeLiveData = repository.getAllEmployees();
+        this.isProfessionSelected = false;
+        this.isEmployeeSelected = false;
     }
 
     public LiveData<List<Profession>> getAllProfessions() {
@@ -43,16 +52,10 @@ public class EmployeeViewModel extends AndroidViewModel {
         if (profession.getId() == ALL_PROFESSIONS_ID) {
             return this.employees;
         } else {
-            List<Employee> result = new ArrayList<>();
-            for (Employee employee : employees) {
-                for (Profession p : employee.getProfessions()) {
-                    if (p.getId() == profession.getId()) {
-                        result.add(employee);
-                        break;
-                    }
-                }
-            }
-            return result;
+            return employees.stream()
+                    .filter(employee -> employee.getProfessions().stream()
+                                    .anyMatch(prof -> prof.getId() == profession.getId()))
+                    .collect(Collectors.toList());
         }
     }
 
@@ -80,4 +83,19 @@ public class EmployeeViewModel extends AndroidViewModel {
         this.employees = employees;
     }
 
+    public boolean isProfessionSelected() {
+        return isProfessionSelected;
+    }
+
+    public void setProfessionSelected(boolean professionSelected) {
+        isProfessionSelected = professionSelected;
+    }
+
+    public boolean isEmployeeSelected() {
+        return isEmployeeSelected;
+    }
+
+    public void setEmployeeSelected(boolean employeeSelected) {
+        isEmployeeSelected = employeeSelected;
+    }
 }

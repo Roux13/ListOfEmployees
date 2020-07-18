@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Objects;
 
 import ru.nehodov.listofemployees.ProfessionListener;
 import ru.nehodov.listofemployees.R;

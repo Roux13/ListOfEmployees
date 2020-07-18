@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +18,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.nehodov.listofemployees.BuildConfig;
+import ru.nehodov.listofemployees.EmployeeViewModel;
 import ru.nehodov.listofemployees.RestApiInterface;
 import ru.nehodov.listofemployees.dao.ProfessionsDao;
 import ru.nehodov.listofemployees.dao.EmployeesDao;
@@ -48,13 +48,9 @@ public class EmployeeRepository {
         interceptor.setLevel(
                 BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY
                         : HttpLoggingInterceptor.Level.BASIC);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://raw.githubusercontent.com/Roux13/task-json/master/")
                 .addConverterFactory(GsonConverterFactory.create())
-//                .client(client)
                 .build();
         this.restApi = retrofit.create(RestApiInterface.class);
         uploadAllEmployeesFomWeb();
@@ -105,22 +101,19 @@ public class EmployeeRepository {
             }
         }
         List<Profession> professions = new ArrayList<>(professionMap.values());
-        EmployeeRoomDatabase.DATABASE_WRITE_EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                professionsDao.deleteAll();
-                for (Profession p : professions) {
-                    professionsDao.insert(p);
-                }
+        EmployeeRoomDatabase.DATABASE_WRITE_EXECUTOR.execute(() -> {
+            professionsDao.deleteAll();
+            for (Profession p : professions) {
+                professionsDao.insert(p);
             }
+            Profession allProfessions = new Profession("AllProfessions");
+            allProfessions.setId(EmployeeViewModel.ALL_PROFESSIONS_ID);
+            professionsDao.insert(allProfessions);
         });
-        EmployeeRoomDatabase.DATABASE_WRITE_EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                employeesDao.deleteAll();
-                for (Employee e : employeesFromJson) {
-                    employeesDao.insert(e);
-                }
+        EmployeeRoomDatabase.DATABASE_WRITE_EXECUTOR.execute(() -> {
+            employeesDao.deleteAll();
+            for (Employee e : employeesFromJson) {
+                employeesDao.insert(e);
             }
         });
     }
