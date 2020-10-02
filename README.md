@@ -7,11 +7,13 @@ All screens are made with fragments. Lists are made with RecyclerView.
 
 The app has 3 screens:
 1. List of all professions.  
-![Image1 of ListOfEmployees](/images/screen1.png)
+![Image1 of ListOfEmployees](/images/screen11.png)
 2. List of employees which you choose by profession.  
-![Image2 of ListOfEmployees](/images/screen2.png)
+![Image2 of ListOfEmployees](/images/screen22.png)
 3. Employee's card.  
-![Image3 of ListOfEmployees](/images/screen3.png)
+![Image3 of ListOfEmployees](/images/screen3.png)  
+4. Employee's card in album orientation.
+![Image4 of ListOfEmployees](/images/screen22_album.png)
 
 ## Contacts
 skype: roux13333
