@@ -1,28 +1,21 @@
-package ru.nehodov.listofemployees;
+package ru.nehodov.listofemployees.viewmodels;
 
 import android.app.Application;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Pair;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import ru.nehodov.listofemployees.models.Employee;
 import ru.nehodov.listofemployees.models.Profession;
-import ru.nehodov.listofemployees.stores.EmployeeRepository;
+import ru.nehodov.listofemployees.network.EmployeeRepository;
 
 public class EmployeeViewModel extends AndroidViewModel {
 
     public static final int ALL_PROFESSIONS_ID = Integer.MAX_VALUE;
-
-    private EmployeeRepository repository;
 
     private LiveData<List<Profession>> professions;
     private LiveData<List<Employee>> employeeLiveData;
@@ -36,7 +29,7 @@ public class EmployeeViewModel extends AndroidViewModel {
 
     public EmployeeViewModel(@NonNull Application application) {
         super(application);
-        this.repository = new EmployeeRepository(application);
+        EmployeeRepository repository = new EmployeeRepository(application);
         this.professions = repository.getAllProfessions();
         this.employeeLiveData = repository.getAllEmployees();
         this.isProfessionSelected = false;

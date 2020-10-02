@@ -14,6 +14,7 @@ import java.util.List;
 
 import ru.nehodov.listofemployees.models.Employee;
 import ru.nehodov.listofemployees.models.Profession;
+import ru.nehodov.listofemployees.viewmodels.EmployeeViewModel;
 
 import static ru.nehodov.listofemployees.EmployeeCardNavigationGraphDirections.ActionGlobalEmployeeCard;
 import static ru.nehodov.listofemployees.EmployeeCardNavigationGraphDirections.actionGlobalEmployeeCard;

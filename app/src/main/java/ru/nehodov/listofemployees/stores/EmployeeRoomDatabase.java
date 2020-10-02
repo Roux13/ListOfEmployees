@@ -22,7 +22,7 @@ public abstract class EmployeeRoomDatabase extends RoomDatabase {
     private static final int NUMBER_OF_THREADS = 4;
     private static volatile EmployeeRoomDatabase instance;
 
-    static final ExecutorService DATABASE_WRITE_EXECUTOR
+    public static final ExecutorService DATABASE_WRITE_EXECUTOR
             = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     private static final String DB_NAME = "employees_db";
@@ -46,14 +46,13 @@ public abstract class EmployeeRoomDatabase extends RoomDatabase {
         }
     };
 
-    static EmployeeRoomDatabase getDatabase(final Context context) {
+    public static EmployeeRoomDatabase getDatabase(final Context context) {
         if (instance == null) {
             synchronized (EmployeeRoomDatabase.class) {
                 if (instance == null) {
                     instance = Room.databaseBuilder(context.getApplicationContext(),
                             EmployeeRoomDatabase.class, DB_NAME)
                             .addCallback(employeeDBCallBack)
-                            .allowMainThreadQueries()
                             .build();
                 }
             }

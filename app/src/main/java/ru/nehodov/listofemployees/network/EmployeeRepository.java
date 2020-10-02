@@ -1,4 +1,4 @@
-package ru.nehodov.listofemployees.stores;
+package ru.nehodov.listofemployees.network;
 
 import android.app.Application;
 import android.util.Log;
@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,12 +17,12 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import ru.nehodov.listofemployees.BuildConfig;
-import ru.nehodov.listofemployees.EmployeeViewModel;
-import ru.nehodov.listofemployees.RestApiInterface;
+import ru.nehodov.listofemployees.viewmodels.EmployeeViewModel;
 import ru.nehodov.listofemployees.dao.ProfessionsDao;
 import ru.nehodov.listofemployees.dao.EmployeesDao;
 import ru.nehodov.listofemployees.models.Employee;
 import ru.nehodov.listofemployees.models.Profession;
+import ru.nehodov.listofemployees.stores.EmployeeRoomDatabase;
 
 public class EmployeeRepository {
 

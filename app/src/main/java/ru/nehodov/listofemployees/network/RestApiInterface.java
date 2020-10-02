@@ -1,4 +1,4 @@
-package ru.nehodov.listofemployees;
+package ru.nehodov.listofemployees.network;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

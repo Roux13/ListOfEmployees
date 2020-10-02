@@ -57,9 +57,6 @@ public class EmployeeListFragment extends Fragment {
 
         private List<Employee> employees;
 
-        public EmployeeAdapter() {
-        }
-
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -105,21 +102,12 @@ public class EmployeeListFragment extends Fragment {
             this.employees = employees;
             notifyDataSetChanged();
         }
-
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(PROFESSION_KEY, profession);
-    }
-
-    public static EmployeeListFragment getInstance(Profession profession) {
-        Bundle args = new Bundle();
-        args.putSerializable(PROFESSION_KEY, profession);
-        EmployeeListFragment fragment = new EmployeeListFragment();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
